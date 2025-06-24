@@ -19,7 +19,7 @@ model User {
   firstName    String
   lastName     String
   email        String?        @unique
-  moblie       String?        @unique
+  mobile       String?        @unique
   password     String
   profileImage String?
   coverImage   String?
