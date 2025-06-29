@@ -66,3 +66,32 @@ picknick@newname CC-20-FB-API % npx prisma db seed
 
 
 etc. https://chatgpt.com/share/685b60e5-248c-800a-8e90-5d3214849c56
+
+
+---
+
+🔍 Example with Yup:
+
+```
+import * as yup from 'yup';
+
+const schema = yup.object({
+  username: yup.string().required(),
+  email: yup.string().email().required(),
+});
+
+schema
+  .validate({ username: 'john', email: 'wrong_email' })
+  .then(data => console.log("✅ Valid:", data))
+  .catch(err => console.error("❌ Error:", err.errors));
+```
+
+You can also use async/await:  
+
+```try {
+  const validData = await schema.validate(data);
+} catch (err) {
+  console.error(err);
+}
+
+```

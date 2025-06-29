@@ -5,8 +5,7 @@ import bcrypt from "bcryptjs";
 
 export async function register(req, res, next) {
   try {
-    const { identity, firstName, lastName, password, confirmPassword } =
-      res.body;
+    const { identity, firstName, lastName, password, confirmPassword } = req.body;
     //validation
     if (
       !(
@@ -14,7 +13,7 @@ export async function register(req, res, next) {
         firstName.trim() &&
         lastName.trim() &&
         password.trim() &&
-        confirmPassword()
+        confirmPassword.trim()
       )
     ) {
       createError(400, "Please fill all data");
@@ -41,14 +40,44 @@ export async function register(req, res, next) {
       lastName: lastName,
     };
 
-    const result = await prisma.user.create({ data: newUser });
+    // const result = await prisma.user.create({ data: newUser });
     res.json({
       msg: "Register controller",
-      result: result,
+      result: newUser,
     });
   } catch (error) {
     next(error);
   }
+}
+
+export async function registerYup(req, res,next) {
+	console.log(req.body)
+	try {
+		const {email, mobile, firstName, lastName, password} = req.body
+		// หา user
+		if(email) {
+			// let  foundUserEmail = await prisma.user.findUnique({where : {email : email}})
+			let  foundUserEmail = await getUserBy('email', email)
+			if(foundUserEmail) createError(409, `Email : ${email}  already register`)
+		}
+		if(mobile) {
+			let  foundUserMobile = await getUserBy('mobile', mobile)
+			if(foundUserMobile) createError(409, `Mobile : ${mobile}  already register`)
+		}
+		const newUser = {
+			email,
+			mobile,
+			password: await bcrypt.hash(password, 10),
+			firstName,
+			lastName
+		}
+		const result = await prisma.user.create({data : newUser})
+		await createUser(newUser)
+		
+		res.json({message: 'Register successful',result})
+	}catch(err) {
+		next(err)
+	}
 }
 
 export const login = (req, res, next) => {

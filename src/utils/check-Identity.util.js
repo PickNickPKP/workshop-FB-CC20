@@ -9,7 +9,7 @@ export default function (identity) {
     identityKey = "email";
   }
   if (mobileRegex.test(identity)) {
-    identityKey = "moblie";
+    identityKey = "mobile";
   }
   if (!identityKey) {
     createError(400, "identity only accept Email or Mobile phone");
